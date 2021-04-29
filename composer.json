@@ -1,0 +1,57 @@
+{
+    "name": "yaroslawww/laravel-dusk-reporter",
+    "description": "Report generator for Laravel Dusk",
+    "keywords": [
+        "report",
+        "laravel-dusk-reporter"
+    ],
+    "homepage": "https://github.com/yaroslawww/laravel-dusk-reporter",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yaroslav Georgitsa",
+            "email": "yaroslav.georgitsa@gmail.com",
+            "homepage": "https://github.com/yaroslawww",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">7.4",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "orchestra/testbench": "^6.16",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ThinkOne\\LaravelDuskReporter\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ThinkOne\\LaravelDuskReporter\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ThinkOne\\LaravelDuskReporter\\ServiceProvider"
+            ],
+            "aliases": {
+                "LaravelDuskReporter": "ThinkOne\\LaravelDuskReporter\\LaravelDuskReporter"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
