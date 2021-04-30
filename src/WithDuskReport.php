@@ -11,7 +11,7 @@ trait WithDuskReport
     protected ?ReportFileContract $globalDuskTestReportFile = null;
 
     /**
-     * Create new report file
+     * Create report file for global usage
      *
      * @param string|null $initialisationFilename
      * @param \Closure|null $initialisationCallback

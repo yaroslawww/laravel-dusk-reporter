@@ -7,6 +7,7 @@ use Closure;
 use ThinkOne\LaravelDuskReporter\Generation\ReportFile;
 use ThinkOne\LaravelDuskReporter\Generation\ReportFileContract;
 use ThinkOne\LaravelDuskReporter\Generation\ReportScreenshot;
+use ThinkOne\LaravelDuskReporter\Generation\ReportScreenshotContract;
 
 class Reporter
 {
@@ -47,16 +48,33 @@ class Reporter
      */
     public static ?Closure $getBodyElementCallback = null;
 
+    /**
+     * Get new report file
+     *
+     * @param string $name
+     *
+     * @return ReportFileContract
+     */
     public function newFile(string $name): ReportFileContract
     {
         return new ReportFile($this, $name);
     }
 
-    public function screenshoter(): ReportScreenshot
+    /**
+     * Get new screenshot manager
+     *
+     * @return ReportScreenshotContract
+     */
+    public function screenshoter(): ReportScreenshotContract
     {
         return new ReportScreenshot($this);
     }
 
+    /**
+     * @param Closure|null $getBodyElementCallback
+     *
+     * @return $this
+     */
     public function setBodyElementSearchCallback(?Closure $getBodyElementCallback): self
     {
         static::$getBodyElementCallback = $getBodyElementCallback;

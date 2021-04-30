@@ -131,7 +131,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function screenshot(Browser $browser, string $suffix = '1', string $resize = 'fit', $newLine = true): self
+    public function screenshot(Browser $browser, string $suffix = '1', ?string $resize = null, $newLine = true): self
     {
         $name = "{$this->fileName()}_{$suffix}";
         $filename = $this->reporter->screenshoter()->make($browser, $name, $resize);

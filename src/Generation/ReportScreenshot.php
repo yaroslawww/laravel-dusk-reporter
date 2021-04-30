@@ -3,17 +3,14 @@
 
 namespace ThinkOne\LaravelDuskReporter\Generation;
 
+use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
 use Imagick;
 use Laravel\Dusk\Browser;
 use ThinkOne\LaravelDuskReporter\Reporter;
 
-class ReportScreenshot
+class ReportScreenshot implements ReportScreenshotContract
 {
-    const RESIZE_FIT = 'fit';
-
-    const RESIZE_COMBINE = 'combine';
-
     protected Reporter $reporter;
 
     /**
@@ -26,20 +23,14 @@ class ReportScreenshot
         $this->reporter = $reporter;
     }
 
-
     /**
-     * Crete screenshot
-     *
-     * @param Browser $browser
-     * @param string $filename
-     * @param string $resize
-     *
-     * @return string
-     * @throws \ImagickException
+     * @inheritDoc
      */
-    public function make(Browser $browser, string $filename, string $resize = 'fit'): string
+    public function make(Browser $browser, string $filename, ?string $resize = null): string
     {
         if (! $this->reporter->isReportingDisabled()) {
+            $resize = is_string($resize) ? $resize : static::RESIZE_FIT;
+
             $defaultStoreScreenshotsAt = $browser::$storeScreenshotsAt;
 
             $browser::$storeScreenshotsAt = $this->reporter->storeScreenshotAt();
@@ -65,8 +56,10 @@ class ReportScreenshot
         return "{$filename}.png";
     }
 
-
-    public function fitContent(Browser $browser)
+    /**
+     * @inheritDoc
+     */
+    public function fitContent(Browser $browser): Browser
     {
         try {
             $body = $this->getBodyElement($browser);
@@ -79,7 +72,13 @@ class ReportScreenshot
         return $browser;
     }
 
-    protected function getBodyElement(Browser $browser): \Facebook\WebDriver\Remote\RemoteWebElement
+    /**
+     * Get body element
+     * @param Browser $browser
+     *
+     * @return RemoteWebElement
+     */
+    protected function getBodyElement(Browser $browser): RemoteWebElement
     {
         if (is_callable($this->reporter::$getBodyElementCallback)) {
             return call_user_func($this->reporter::$getBodyElementCallback, $browser);
@@ -89,6 +88,8 @@ class ReportScreenshot
     }
 
     /**
+     * Create combined report
+     *
      * @param Browser $browser
      * @param string $filename
      *

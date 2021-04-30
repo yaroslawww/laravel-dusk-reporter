@@ -113,12 +113,12 @@ interface ReportFileContract
      *
      * @param Browser $browser
      * @param string $suffix
-     * @param string $resize
+     * @param string|null $resize
      * @param bool $newLine
      *
      * @return $this
      */
-    public function screenshot(Browser $browser,  string $suffix = '1', string $resize = 'fit', $newLine = true): self;
+    public function screenshot(Browser $browser,  string $suffix = '1', ?string $resize = null, $newLine = true): self;
 
     /**
      * @param string|null $newLine
