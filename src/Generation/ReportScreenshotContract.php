@@ -23,11 +23,12 @@ interface ReportScreenshotContract
      * @param Browser $browser
      * @param string $filename
      * @param string|null $resize
+     * @param string|null $suffix
      *
      * @return string
      * @throws \ImagickException
      */
-    public function make(Browser $browser, string $filename, ?string $resize = null): string;
+    public function make(Browser $browser, string $filename, ?string $resize = null, ?string $suffix = null): string;
 
     /**
      * Fit browser content

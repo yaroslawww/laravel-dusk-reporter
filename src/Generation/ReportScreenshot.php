@@ -5,6 +5,7 @@ namespace ThinkOne\LaravelDuskReporter\Generation;
 
 use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
+use Illuminate\Support\Str;
 use Imagick;
 use Laravel\Dusk\Browser;
 use ThinkOne\LaravelDuskReporter\Reporter;
@@ -12,6 +13,8 @@ use ThinkOne\LaravelDuskReporter\Reporter;
 class ReportScreenshot implements ReportScreenshotContract
 {
     protected Reporter $reporter;
+
+    protected string $fileExt = 'png';
 
     /**
      * ReportScreenshot constructor.
@@ -26,14 +29,20 @@ class ReportScreenshot implements ReportScreenshotContract
     /**
      * @inheritDoc
      */
-    public function make(Browser $browser, string $filename, ?string $resize = null): string
+    public function make(Browser $browser, string $filename, ?string $resize = null, ?string $suffix = null): string
     {
+        $realFileName = "{$filename}.{$this->fileExt}";
+
         if (! $this->reporter->isReportingDisabled()) {
             $resize = is_string($resize) ? $resize : static::RESIZE_FIT;
 
             $defaultStoreScreenshotsAt = $browser::$storeScreenshotsAt;
 
             $browser::$storeScreenshotsAt = $this->reporter->storeScreenshotAt();
+
+            $filename = $this->fileName($browser, $filename, $suffix);
+
+            $realFileName = "{$filename}.{$this->fileExt}";
 
             if ($resize == static::RESIZE_COMBINE) {
                 $this->reportScreenCombined($browser, $filename);
@@ -53,7 +62,7 @@ class ReportScreenshot implements ReportScreenshotContract
             $browser::$storeScreenshotsAt = $defaultStoreScreenshotsAt;
         }
 
-        return "{$filename}.png";
+        return $realFileName;
     }
 
     /**
@@ -74,6 +83,7 @@ class ReportScreenshot implements ReportScreenshotContract
 
     /**
      * Get body element
+     *
      * @param Browser $browser
      *
      * @return RemoteWebElement
@@ -111,8 +121,8 @@ class ReportScreenshot implements ReportScreenshotContract
                 $browser->resize($windowSize->getWidth(), $needCapture);
                 $browser->driver->executeScript('window.scrollTo(0, document.body.scrollHeight);');
             }
-            $browser->screenshot($screenName = "{$filename}_{$counter}");
-            $files[] = $filePath = sprintf('%s/%s.png', rtrim($browser::$storeScreenshotsAt, '/'), $screenName);
+            $browser->screenshot($screenName = "{$filename}_tmp-{$counter}");
+            $files[] = $filePath = sprintf('%s/%s.' . $this->fileExt, rtrim($browser::$storeScreenshotsAt, '/'), $screenName);
             $counter++;
             $offset += $windowHeight;
         }
@@ -129,9 +139,36 @@ class ReportScreenshot implements ReportScreenshotContract
         $combined = $im->appendImages(true);
 
         /* Output the image */
-        $combined->setImageFormat('png');
-        $combined->writeImage(sprintf('%s/%s.png', rtrim($browser::$storeScreenshotsAt, '/'), $filename));
+        $combined->setImageFormat($this->fileExt);
+        $combined->writeImage(sprintf('%s/%s.' . $this->fileExt, rtrim($browser::$storeScreenshotsAt, '/'), $filename));
 
         return $browser;
+    }
+
+    /**
+     * Find screenshot filename without overriding
+     * @param Browser $browser
+     * @param string $filename
+     * @param string|null $suffix
+     *
+     * @return string
+     */
+    protected function fileName(Browser $browser, string $filename, ?string $suffix = null): string
+    {
+        $newFilename = $filename . ($suffix ? "_{$suffix}" : '');
+
+        if (file_exists(sprintf('%s/%s.' . $this->fileExt, rtrim($browser::$storeScreenshotsAt, '/'), $newFilename))) {
+            if (is_null($suffix)) {
+                $suffix = 1;
+            } elseif (is_numeric($suffix)) {
+                $suffix = $suffix + 1;
+            } else {
+                $suffix = $suffix . '-' . Str::random();
+            }
+
+            return $this->fileName($browser, $filename, $suffix);
+        }
+
+        return $newFilename;
     }
 }

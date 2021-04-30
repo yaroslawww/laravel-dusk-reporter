@@ -131,16 +131,15 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function screenshot(Browser $browser, string $suffix = '1', ?string $resize = null, $newLine = true): self
+    public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null, $newLine = true): self
     {
-        $name = "{$this->fileName()}_{$suffix}";
-        $filename = $this->reporter->screenshoter()->make($browser, $name, $resize);
+        $filename = $filepath = $this->reporter->screenshoter()->make($browser, $this->fileName(), $resize, $suffix);
 
         if ($this->reporter->useScreenshotRelativePath()) {
-            $filename = $this->filePrefix() . Str::afterLast($filename, $this->filePrefix());
+            $filepath = $this->filePrefix() . Str::afterLast($filepath, $this->filePrefix());
         }
 
-        return $this->addContent("![{$name}]({$filename})", $newLine);
+        return $this->addContent("![{$filename}]({$filepath})", $newLine);
     }
 
     public function fullFileName(): string
@@ -162,20 +161,27 @@ class ReportFile implements ReportFileContract
         return $array[0] ?? '';
     }
 
-
+    /**
+     * Save content
+     * @param string $content
+     * @param bool $newLine
+     *
+     * @return $this
+     */
     protected function addContent(string $content = '', $newLine = true): self
     {
-        $suffix = '';
+        $newLineText = '';
         if ($newLine) {
-            $suffix = is_string($newLine) ? $newLine : $this->newLine;
+            $newLineText = is_string($newLine) ? $newLine : $this->newLine;
         }
 
-        $this->appendToFile($content . $suffix);
+        $this->appendToFile($content . $newLineText);
 
         return $this;
     }
 
     /**
+     * Append content to file
      * @param string $content
      *
      * @return void
