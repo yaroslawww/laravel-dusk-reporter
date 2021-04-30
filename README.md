@@ -13,7 +13,19 @@ composer require --dev yaroslawww/laravel-dusk-reporter
 
 ## Usage
 
-1. Use trait `WithDuskReport` in your dusk test case. This is optional, but it will be easy to rename the file.
+#### Purge old data
+
+When testing, the package adds content files, so you need to clear the directories before starting tests again
+
+```shell
+php artisan dusk-reporter:purge
+# or
+php artisan dusk-reporter:purge -y
+# or
+php artisan dusk-reporter:purge --path="/my/project/report"
+```
+
+#### 1. Use trait `WithDuskReport` in your dusk test case. This is optional, but it will be easy to rename the file.
 
 ```injectablephp
 //...
@@ -28,7 +40,7 @@ abstract class DuskTestCase extends BaseTestCase
 }
 ```
 
-2. You can override default configuration
+#### 2. You can override default configuration
 
 ```injectablephp
 //...
@@ -63,31 +75,37 @@ abstract class DuskTestCase extends BaseTestCase
 }
 ```
 
-3. Create report
+#### 3. Create report
 
 ```injectablephp
-/** @test */
-public function open_not_logged_user() {
-    $REPORT = $this->newDuskReportFile()
-                   ->h1( 'Home marketing page' )
-                   ->br()->h2( 'Initial data' )->br()
-                   ->raw( "Open page by not logged user" )->br()
-                   ->h2( 'Result' )->br();
+namespace Tests\Browser\CPD\Marketing;
 
-    $this->browse( function ( Browser $browser ) use ( $REPORT ) {
-        $browser->visit( new HomePage() )
-                // ...
-                ->assertPresent( '@header' )
-                ->assertPresent( '@footer' );
+//...
 
-        $REPORT->screenshot( $browser, 1, ReportScreenshot::RESIZE_COMBINE );
-    } );
+class HomePageTest extends DuskTestCase {
+    /** @test */
+    public function open_not_logged_user() {
+        $REPORT = $this->newDuskReportFile()
+                       ->h1( 'Home marketing page' )
+                       ->br()->h2( 'Initial data' )->br()
+                       ->raw( "Open page by not logged user" )->br()
+                       ->h2( 'Result' )->br();
     
-    $REPORT->br()->h3('Conclusion')->br()->raw('Test passed.');
+        $this->browse( function ( Browser $browser ) use ( $REPORT ) {
+            $browser->visit( new HomePage() )
+                    // ...
+                    ->assertPresent( '@header' )
+                    ->assertPresent( '@footer' );
+    
+            $REPORT->screenshot( $browser, 1, ReportScreenshot::RESIZE_COMBINE );
+        } );
+        
+        $REPORT->br()->h3('Conclusion')->br()->raw('Test passed.');
+    }
 }
 ```
 
-By default you will see report directories tree like this:
+By default, you will see report directories tree like this:
 
 ```
 - storage
@@ -112,6 +130,82 @@ Open page by not logged user
 ### Conclusion
 
 Test passed.
+```
+
+#### 4. Create report for one test file
+
+By default, the package is designed to create one report for one test (since the phpunit re-creates the structure for
+each test). But you can create one file for multiple tests using method `duskReportFile`
+
+```injectablephp
+namespace Tests\Browser\CPD\Marketing;
+
+//...
+
+class HomePageTest extends DuskTestCase {
+
+    use DatabaseMigrations;
+
+    protected function setUp(): void {
+        parent::setUp();
+        // ...
+
+        $this->duskReportFile('Marketing/home-page', function (ReportFileContract $file) {
+            $file->h1( 'Home marketing page' )->br();
+        });
+    }
+
+    /**  @test */
+    public function open_not_logged_user() {
+
+        $this->browse( function ( Browser $browser ) {
+            $browser->visit( new HomePage() )
+                    // ...
+                    ->assertPresent( '@header' )
+                    ->assertPresent( '@footer' );
+
+            $this->duskReportFile()->h2( "Open page by not logged user" )->br()
+                         ->screenshot( $browser, 1, ReportScreenshot::RESIZE_COMBINE )->br();
+        } );
+    }
+
+    /**  @test */
+    public function page_has_video() {
+        $this->browse( function ( Browser $browser ) {
+            $browser->visit( new HomePage() )
+                    ->assertPresent( '@marketing-video' );
+
+            $this->duskReportFile()->h2( "Open page with video by not logged user" )->br()
+                         ->screenshot( $browser, 2, ReportScreenshot::RESIZE_FIT )->br();
+        } );
+    }
+
+}
+```
+
+By default, you will see report directories tree like this:
+
+```
+- storage
+-- laravel-dusk-reporter
+--- Marketing
+---- home-page.md
+---- home-page_1.png
+---- home-page_2.png
+```
+
+File `home-page.md` will contain this data:
+
+```
+# Home marketing page
+
+## Open page by not logged user
+
+![Marketing/home-page_1](home-page_1.png)
+
+## Open page with video by not logged user
+
+![Marketing/home-page_2](home-page_2.png)
 ```
 
 ## Credits
