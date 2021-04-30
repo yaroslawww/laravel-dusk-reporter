@@ -208,6 +208,12 @@ File `home-page.md` will contain this data:
 ![Marketing/home-page_2](home-page_2.png)
 ```
 
+#### 5. Disable reporting
+Sometimes you need to cancel the creation of a report (for example, you want to make a quick test without generating a report). Then just add a global variable `DUSK_REPORT_DISABLED=1`
+```shell
+DUSK_REPORT_DISABLED=1 php artisan dusk tests/Browser/CPD/Marketing/HomePageTest.php --stop-on-failure
+```
+
 ## Credits
 
 - [![Think Studio](https://yaroslawww.github.io/images/sponsors/packages/logo-think-studio.png)](https://think.studio/)

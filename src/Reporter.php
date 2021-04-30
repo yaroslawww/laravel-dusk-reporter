@@ -34,6 +34,13 @@ class Reporter
     public static bool $screenshotRelativePath = true;
 
     /**
+     * Disable reporting
+     *
+     * @var bool
+     */
+    public static bool $stopReporting = false;
+
+    /**
      * Closure tio find body element.
      *
      * @var Closure|null
@@ -94,5 +101,15 @@ class Reporter
     public function useScreenshotRelativePath(): bool
     {
         return static::$screenshotRelativePath && ($this->storeScreenshotAt() == $this->storeBuildAt());
+    }
+
+    /**
+     * Check is reporting disabled
+     *
+     * @return bool
+     */
+    public function isReportingDisabled(): bool
+    {
+        return static::$stopReporting;
     }
 }

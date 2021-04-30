@@ -39,26 +39,28 @@ class ReportScreenshot
      */
     public function make(Browser $browser, string $filename, string $resize = 'fit'): string
     {
-        $defaultStoreScreenshotsAt = $browser::$storeScreenshotsAt;
+        if (! $this->reporter->isReportingDisabled()) {
+            $defaultStoreScreenshotsAt = $browser::$storeScreenshotsAt;
 
-        $browser::$storeScreenshotsAt = $this->reporter->storeScreenshotAt();
+            $browser::$storeScreenshotsAt = $this->reporter->storeScreenshotAt();
 
-        if ($resize == static::RESIZE_COMBINE) {
-            $this->reportScreenCombined($browser, $filename);
-        } else {
-            $defaultSize = $browser->driver->manage()->window()->getSize();
-            if ($resize == static::RESIZE_FIT) {
-                $browser = $this->fitContent($browser);
+            if ($resize == static::RESIZE_COMBINE) {
+                $this->reportScreenCombined($browser, $filename);
+            } else {
+                $defaultSize = $browser->driver->manage()->window()->getSize();
+                if ($resize == static::RESIZE_FIT) {
+                    $browser = $this->fitContent($browser);
+                }
+
+                $browser->screenshot($filename);
+
+                if ($resize == static::RESIZE_FIT && $defaultSize) {
+                    $browser->resize($defaultSize->getWidth(), $defaultSize->getHeight());
+                }
             }
 
-            $browser->screenshot($filename);
-
-            if ($resize == static::RESIZE_FIT && $defaultSize) {
-                $browser->resize($defaultSize->getWidth(), $defaultSize->getHeight());
-            }
+            $browser::$storeScreenshotsAt = $defaultStoreScreenshotsAt;
         }
-
-        $browser::$storeScreenshotsAt = $defaultStoreScreenshotsAt;
 
         return "{$filename}.png";
     }

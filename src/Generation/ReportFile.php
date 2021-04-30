@@ -36,6 +36,17 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
+    public function isEmpty(): bool
+    {
+        $filePath = $this->fullFileName();
+        clearstatcache();
+
+        return ! (file_exists($filePath) && filesize($filePath));
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function raw(string $content = '', $newLine = false): self
     {
         return $this->addContent($content, $newLine);
@@ -164,24 +175,23 @@ class ReportFile implements ReportFileContract
         return $this;
     }
 
-    protected function appendToFile(string $content)
+    /**
+     * @param string $content
+     *
+     * @return void
+     */
+    protected function appendToFile(string $content): void
     {
-        $filePath = $this->fullFileName();
+        if (! $this->reporter->isReportingDisabled()) {
+            $filePath = $this->fullFileName();
 
-        $directoryPath = dirname($filePath);
+            $directoryPath = dirname($filePath);
 
-        if (! is_dir($directoryPath)) {
-            mkdir($directoryPath, 0777, true);
+            if (! is_dir($directoryPath)) {
+                mkdir($directoryPath, 0777, true);
+            }
+
+            file_put_contents($filePath, $content, FILE_APPEND | LOCK_EX);
         }
-
-        return file_put_contents($filePath, $content, FILE_APPEND | LOCK_EX);
-    }
-
-    public function isEmpty(): bool
-    {
-        $filePath = $this->fullFileName();
-        clearstatcache();
-
-        return ! (file_exists($filePath) && filesize($filePath));
     }
 }

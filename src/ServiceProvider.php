@@ -17,6 +17,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
     public function register()
     {
+        Reporter::$stopReporting = (bool) getenv('DUSK_REPORT_DISABLED');
         $this->app->bind(Reporter::class, function ($app) {
             if (! Reporter::$storeBuildAt) {
                 Reporter::$storeBuildAt = storage_path('laravel-dusk-reporter');
