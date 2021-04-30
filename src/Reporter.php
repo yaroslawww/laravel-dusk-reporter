@@ -151,7 +151,13 @@ class Reporter
                 mkdir($directoryPath, 0777, true);
             }
 
-            if (! file_exists($filePath) || strpos(file_get_contents($filePath), $reportFile) === false) {
+            if (! file_exists($filePath)) {
+                file_put_contents($filePath, "Please install the extension so that images and links are displayed correctly. \\ [Markdown Viewer / Browser Extension](https://github.com/simov/markdown-viewer#markdown-viewer--browser-extension) \\" . PHP_EOL . PHP_EOL);
+            }
+
+
+
+            if (strpos(file_get_contents($filePath), $reportFile) === false) {
                 file_put_contents($filePath, "- [{$reportFile}]({$reportFile})" . PHP_EOL, FILE_APPEND | LOCK_EX);
             }
         }

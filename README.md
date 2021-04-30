@@ -42,17 +42,33 @@ abstract class DuskTestCase extends BaseTestCase
 
 #### 2. You can override default configuration
 
+Change store report folder, by default package use "base_path('storage/laravel-dusk-reporter')"
+
 ```injectablephp
-// Change store report folder, by default package use "storage_path('laravel-dusk-reporter')"
 Reporter::$storeBuildAt = app_path('reports/dusk-report');
+```
 
-// Change store screenshots folder, by default package use field "$storeBuildAt"
+or
+
+```shell
+DUSK_REPORT_PATH=reports/browser-tests  php artisan dusk  --stop-on-failure
+```
+
+Change store screenshots folder, by default package use field "$storeBuildAt"
+
+```injectablephp
 Reporter::$storeScreenshotAt = app_path('reports/dusk-screenshots');
+```
 
-// By default package save link in `.md` files as relative path, you can change it
+By default package save link in `.md` files as relative path, you can change it
+
+```injectablephp
 Reporter::$screenshotRelativePath = false;
- 
-// Change element to fit content (by default package use "body" tag)
+```
+
+Change element to fit content (by default package use "body" tag)
+
+```injectablephp
 Reporter::$getBodyElementCallback = function ($browser) {
     return $browser->driver->findElement(WebDriverBy::id('someId'));
 };
@@ -192,7 +208,10 @@ File `home-page.md` will contain this data:
 ```
 
 #### 5. Disable reporting
-Sometimes you need to cancel the creation of a report (for example, you want to make a quick test without generating a report). Then just add a global variable `DUSK_REPORT_DISABLED=1`
+
+Sometimes you need to cancel the creation of a report (for example, you want to make a quick test without generating a
+report). Then just add a global variable `DUSK_REPORT_DISABLED=1`
+
 ```shell
 DUSK_REPORT_DISABLED=1 php artisan dusk tests/Browser/CPD/Marketing/HomePageTest.php --stop-on-failure
 ```
