@@ -152,7 +152,7 @@ class Reporter
             }
 
             if (! file_exists($filePath)) {
-                file_put_contents($filePath, "Please install the extension so that images and links are displayed correctly. \\ [Markdown Viewer / Browser Extension](https://github.com/simov/markdown-viewer#markdown-viewer--browser-extension) \\" . PHP_EOL . PHP_EOL);
+                file_put_contents($filePath, "Please install the extension so that images and links are displayed correctly: [Markdown Viewer / Browser Extension](https://github.com/simov/markdown-viewer#markdown-viewer--browser-extension)." . PHP_EOL . PHP_EOL);
             }
 
 
