@@ -16,10 +16,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         $this->app->bind(Reporter::class, function ($app) {
             if (! Reporter::$storeBuildAt) {
-                Reporter::$storeBuildAt = storage_path('laravel-dusk-reporter/build');
-            }
-            if (! Reporter::$storeScreenshotAt) {
-                Reporter::$storeScreenshotAt = storage_path('laravel-dusk-reporter/screenshots');
+                Reporter::$storeBuildAt = storage_path('laravel-dusk-reporter');
             }
 
             return new Reporter();

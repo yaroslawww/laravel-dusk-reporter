@@ -23,11 +23,20 @@ class ReportScreenshot
     }
 
 
+    /**
+     * Crete screenshot
+     * @param Browser $browser
+     * @param string $filename
+     * @param string $resize
+     *
+     * @return string
+     * @throws \ImagickException
+     */
     public function make(Browser $browser, string $filename, string $resize = 'fit'): string
     {
         $defaultStoreScreenshotsAt = $browser::$storeScreenshotsAt;
 
-        $browser::$storeScreenshotsAt = Reporter::$storeScreenshotAt;
+        $browser::$storeScreenshotsAt = $this->reporter->storeScreenshotAt();
 
         if ($resize == 'combine') {
             $this->reportScreenCombined($browser, $filename);
@@ -46,7 +55,7 @@ class ReportScreenshot
 
         $browser::$storeScreenshotsAt = $defaultStoreScreenshotsAt;
 
-        return $filename;
+        return "{$filename}.png";
     }
 
 
