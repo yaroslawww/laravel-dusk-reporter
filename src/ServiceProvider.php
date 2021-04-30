@@ -2,12 +2,15 @@
 
 namespace ThinkOne\LaravelDuskReporter;
 
+use ThinkOne\LaravelDuskReporter\Commands\PurgeFilesCommand;
+
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     public function boot()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
+                PurgeFilesCommand::class,
             ]);
         }
     }

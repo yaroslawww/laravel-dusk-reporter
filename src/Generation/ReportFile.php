@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ThinkOne\LaravelDuskReporter\Generation;
 
 use Illuminate\Support\Str;
@@ -10,8 +9,6 @@ use ThinkOne\LaravelDuskReporter\Reporter;
 class ReportFile implements ReportFileContract
 {
     protected Reporter $reporter;
-
-    protected string $data = '';
 
     protected string $name;
 
@@ -135,16 +132,11 @@ class ReportFile implements ReportFileContract
         return $this->addContent("![{$name}]({$filename})", $newLine);
     }
 
-    protected function addContent(string $content = '', $newLine = true): self
+    public function fullFileName(): string
     {
-        $suffix = '';
-        if ($newLine) {
-            $suffix = is_string($newLine) ? $newLine : $this->newLine;
-        }
+        $path = $this->reporter->storeBuildAt();
 
-        $this->data .= $content . $suffix;
-
-        return $this;
+        return "{$path}/{$this->fileName()}.md";
     }
 
     public function fileName(): string
@@ -160,17 +152,36 @@ class ReportFile implements ReportFileContract
     }
 
 
-    public function __destruct()
+    protected function addContent(string $content = '', $newLine = true): self
     {
-        $path = $this->reporter->storeBuildAt();
+        $suffix = '';
+        if ($newLine) {
+            $suffix = is_string($newLine) ? $newLine : $this->newLine;
+        }
 
-        $filePath = "{$path}/{$this->fileName()}.md";
+        $this->appendToFile($content . $suffix);
+
+        return $this;
+    }
+
+    protected function appendToFile(string $content)
+    {
+        $filePath = $this->fullFileName();
+
         $directoryPath = dirname($filePath);
 
         if (! is_dir($directoryPath)) {
             mkdir($directoryPath, 0777, true);
         }
 
-        return file_put_contents($filePath, $this->data);
+        return file_put_contents($filePath, $content, FILE_APPEND | LOCK_EX);
+    }
+
+    public function isEmpty(): bool
+    {
+        $filePath = $this->fullFileName();
+        clearstatcache();
+
+        return ! (file_exists($filePath) && filesize($filePath));
     }
 }

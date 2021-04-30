@@ -8,9 +8,34 @@ use ThinkOne\LaravelDuskReporter\Generation\ReportFileContract;
 
 trait WithDuskReport
 {
+    protected ?ReportFileContract $globalDuskTestReportFile = null;
 
     /**
-     * Get File Name for Report
+     * Create new report file
+     *
+     * @param string|null $initialisationFilename
+     * @param \Closure|null $initialisationCallback
+     *
+     * @return ReportFileContract
+     * @throws LaravelDuskReporterException
+     */
+    protected function duskReportFile(?string $initialisationFilename = null, ?\Closure $initialisationCallback = null): ReportFileContract
+    {
+        if (! $this->globalDuskTestReportFile) {
+            if (! $initialisationFilename) {
+                throw new LaravelDuskReporterException('On initialisation you should specify $initialisationFilename');
+            }
+            $this->globalDuskTestReportFile = $this->newDuskReportFile($initialisationFilename);
+            if (is_callable($initialisationCallback) && $this->globalDuskTestReportFile->isEmpty()) {
+                call_user_func_array($initialisationCallback, [ &$this->globalDuskTestReportFile ]);
+            }
+        }
+
+        return $this->globalDuskTestReportFile;
+    }
+
+    /**
+     * Create new report file
      *
      * @param string|null $filename
      *

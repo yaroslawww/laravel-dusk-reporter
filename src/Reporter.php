@@ -40,7 +40,6 @@ class Reporter
      */
     public static ?Closure $getBodyElementCallback = null;
 
-
     public function newFile(string $name): ReportFileContract
     {
         return new ReportFile($this, $name);

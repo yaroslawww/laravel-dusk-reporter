@@ -126,4 +126,9 @@ interface ReportFileContract
      * @return $this
      */
     public function setNewLine(?string $newLine): self;
+
+    /**
+     * @return bool
+     */
+    public function isEmpty(): bool;
 }
