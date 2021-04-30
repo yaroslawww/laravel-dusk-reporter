@@ -24,6 +24,8 @@ class ReportFile implements ReportFileContract
     {
         $this->reporter = $reporter;
         $this->name = $name;
+
+        $this->reporter->addToTableOfContents($this->fileName());
     }
 
     public function setNewLine(?string $newLine): self
@@ -38,7 +40,7 @@ class ReportFile implements ReportFileContract
      */
     public function isEmpty(): bool
     {
-        $filePath = $this->fullFileName();
+        $filePath = $this->reporter->reportFileName($this->fileName());
         clearstatcache();
 
         return ! (file_exists($filePath) && filesize($filePath));
@@ -142,13 +144,6 @@ class ReportFile implements ReportFileContract
         return $this->addContent("![{$filename}]({$filepath})", $newLine);
     }
 
-    public function fullFileName(): string
-    {
-        $path = $this->reporter->storeBuildAt();
-
-        return "{$path}/{$this->fileName()}.md";
-    }
-
     public function fileName(): string
     {
         return $this->name;
@@ -189,7 +184,7 @@ class ReportFile implements ReportFileContract
     protected function appendToFile(string $content): void
     {
         if (! $this->reporter->isReportingDisabled()) {
-            $filePath = $this->fullFileName();
+            $filePath = $this->reporter->reportFileName($this->fileName());
 
             $directoryPath = dirname($filePath);
 

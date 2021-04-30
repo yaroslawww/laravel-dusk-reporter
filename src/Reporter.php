@@ -130,4 +130,43 @@ class Reporter
     {
         return static::$stopReporting;
     }
+
+    /**
+     * Add File to table of contents
+     *
+     * @param string $name
+     *
+     * @return void
+     */
+    public function addToTableOfContents(string $name): void
+    {
+        if (! $this->isReportingDisabled()) {
+            $reportFile = $this->reportFileName($name, true);
+
+            $filePath = "{$this->storeBuildAt()}/index.md";
+
+            $directoryPath = dirname($filePath);
+
+            if (! is_dir($directoryPath)) {
+                mkdir($directoryPath, 0777, true);
+            }
+
+            if (! file_exists($filePath) || strpos(file_get_contents($filePath), $reportFile) === false) {
+                file_put_contents($filePath, "- [{$reportFile}]({$reportFile})" . PHP_EOL, FILE_APPEND | LOCK_EX);
+            }
+        }
+    }
+
+    /**
+     * Get report file name
+     *
+     * @param string $name
+     * @param bool $relative
+     *
+     * @return string
+     */
+    public function reportFileName(string $name, bool $relative = false): string
+    {
+        return ($relative ? '' : "{$this->storeBuildAt()}/") . "{$name}.md";
+    }
 }

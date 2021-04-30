@@ -43,36 +43,19 @@ abstract class DuskTestCase extends BaseTestCase
 #### 2. You can override default configuration
 
 ```injectablephp
-//...
-use ThinkOne\LaravelDuskReporter\Reporter;
-use ThinkOne\LaravelDuskReporter\WithDuskReport;
+// Change store report folder, by default package use "storage_path('laravel-dusk-reporter')"
+Reporter::$storeBuildAt = app_path('reports/dusk-report');
 
-abstract class DuskTestCase extends BaseTestCase
-{
-    use WithDuskReport;
-    
-    protected function setUp(): void
-    {
-        parent::setUp();
-        
-        // Change store report folder, by default package use "storage_path('laravel-dusk-reporter')"
-        Reporter::$storeBuildAt = app_path('reports/dusk-report');
-        
-        // Change store screenshots folder, by default package use field "$storeBuildAt"
-        Reporter::$storeScreenshotAt = app_path('reports/dusk-screenshots');
-        
-        // By default package save link in `.md` files as relative path, you can change it
-        Reporter::$screenshotRelativePath = false;
-         
-        // Change element to fit content (by default package use "body" tag)
-        Reporter::$getBodyElementCallback = function ($browser) {
-            return $browser->driver->findElement(WebDriverBy::id('root'));
-        };
-    }
-    
-    //...
-    
-}
+// Change store screenshots folder, by default package use field "$storeBuildAt"
+Reporter::$storeScreenshotAt = app_path('reports/dusk-screenshots');
+
+// By default package save link in `.md` files as relative path, you can change it
+Reporter::$screenshotRelativePath = false;
+ 
+// Change element to fit content (by default package use "body" tag)
+Reporter::$getBodyElementCallback = function ($browser) {
+    return $browser->driver->findElement(WebDriverBy::id('someId'));
+};
 ```
 
 #### 3. Create report
