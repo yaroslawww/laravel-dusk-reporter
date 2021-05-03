@@ -15,7 +15,7 @@ interface ReportFileContract
      *
      * @return $this
      */
-    public function raw(string $content = '', $newLine = true): self;
+    public function raw(string $content = '', $newLine = false): self;
 
     /**
      * Add header #1
