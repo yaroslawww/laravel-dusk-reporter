@@ -141,7 +141,7 @@ class ReportFile implements ReportFileContract
             $filepath = $this->filePrefix() . Str::afterLast($filepath, $this->filePrefix());
         }
 
-        return $this->addContent("![{$filename}]({$filepath})", $newLine);
+        return $this->addContent("![{$filename}](./{$filepath})", $newLine);
     }
 
     public function fileName(): string

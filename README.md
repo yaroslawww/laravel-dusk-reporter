@@ -216,6 +216,43 @@ report). Then just add a global variable `DUSK_REPORT_DISABLED=1`
 DUSK_REPORT_DISABLED=1 php artisan dusk tests/Browser/CPD/Marketing/HomePageTest.php --stop-on-failure
 ```
 
+## Frontend generation
+
+In some cases, you will need to show the report in HTML format. Usually it is convenient to use md->html compilers for
+this. For example, you can use [vuepress](https://vuepress.vuejs.org/)
+
+```shell
+# Add vuepress if not exists
+yarn add -D vuepress
+```
+
+Then add command to your package.json
+
+```
+# package.json
+{
+    ...
+    "scripts": {
+        ...
+        "testsPreview:build": "cp -r vendor/yaroslawww/laravel-dusk-reporter/assets/.vuepress storage/laravel-dusk-reporter/ && VUEPRESS_BASE='/laravel-dusk-reporter-html/' VUEPRESS_DEST='public/laravel-dusk-reporter-html' vuepress build storage/laravel-dusk-reporter",
+        ...
+    },
+    "devDependencies": {
+        ...
+        "vuepress": "^1.5.4",
+        ...
+    },
+    ...
+}
+
+```
+
+Then just run
+
+```shell
+yarn testsPreview:build
+```
+
 ## Credits
 
 - [![Think Studio](https://yaroslawww.github.io/images/sponsors/packages/logo-think-studio.png)](https://think.studio/)
