@@ -10,7 +10,6 @@ Report will be saved in `.md` files.
 You can install the package via composer:
 
 ```bash
-composer require --dev laravel/dusk
 composer require --dev yaroslawww/laravel-dusk-reporter
 ```
 
