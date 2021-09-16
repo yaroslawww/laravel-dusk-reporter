@@ -29,7 +29,7 @@ php artisan dusk-reporter:purge --path="/my/project/report"
 
 ```injectablephp
 //...
-use ThinkOne\LaravelDuskReporter\WithDuskReport;
+use LaravelDuskReporter\WithDuskReport;
 
 abstract class DuskTestCase extends BaseTestCase
 {
@@ -210,10 +210,12 @@ File `home-page.md` will contain this data:
 #### 5. Disable reporting
 
 Sometimes you need to cancel the creation of a report (for example, you want to make a quick test without generating a
-report). Then just add a global variable `DUSK_REPORT_DISABLED=1`
+report). Then just add a global variable `DUSK_REPORT_DISABLED=1` or add it to `.env.dusk.local` file. Also package
+supports disabling only screenshots `DUSK_SCREENSHOTS_DISABLED=1`
 
 ```shell
 DUSK_REPORT_DISABLED=1 php artisan dusk tests/Browser/CPD/Marketing/HomePageTest.php --stop-on-failure
+DUSK_SCREENSHOTS_DISABLED=1 php artisan dusk tests/Browser/CPD/Marketing/HomePageTest.php --stop-on-failure
 ```
 
 ## Frontend generation

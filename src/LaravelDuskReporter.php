@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ThinkOne\LaravelDuskReporter;
+namespace LaravelDuskReporter;
 
 use Illuminate\Support\Facades\Facade;
 

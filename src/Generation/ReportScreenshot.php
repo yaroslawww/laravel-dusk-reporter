@@ -1,14 +1,15 @@
 <?php
 
 
-namespace ThinkOne\LaravelDuskReporter\Generation;
+namespace LaravelDuskReporter\Generation;
 
+use Exception;
 use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverBy;
 use Illuminate\Support\Str;
 use Imagick;
 use Laravel\Dusk\Browser;
-use ThinkOne\LaravelDuskReporter\Reporter;
+use LaravelDuskReporter\Reporter;
 
 class ReportScreenshot implements ReportScreenshotContract
 {
@@ -33,7 +34,7 @@ class ReportScreenshot implements ReportScreenshotContract
     {
         $realFileName = "{$filename}.{$this->fileExt}";
 
-        if (! $this->reporter->isReportingDisabled()) {
+        if (!$this->reporter->isReportingDisabled()) {
             $resize = is_string($resize) ? $resize : static::RESIZE_FIT;
 
             $defaultStoreScreenshotsAt = $browser::$storeScreenshotsAt;
@@ -71,10 +72,10 @@ class ReportScreenshot implements ReportScreenshotContract
     public function fitContent(Browser $browser): Browser
     {
         try {
-            $body = $this->getBodyElement($browser);
+            $body        = $this->getBodyElement($browser);
             $currentSize = $body->getSize();
             $browser->resize($currentSize->getWidth(), $currentSize->getHeight());
-        } catch (\Exception $e) {
+        } catch (Exception) {
             $browser->fitContent();
         }
 
@@ -90,8 +91,8 @@ class ReportScreenshot implements ReportScreenshotContract
      */
     protected function getBodyElement(Browser $browser): RemoteWebElement
     {
-        if (is_callable($this->reporter::$getBodyElementCallback)) {
-            return call_user_func($this->reporter::$getBodyElementCallback, $browser);
+        if (is_callable(Reporter::$getBodyElementCallback)) {
+            return call_user_func(Reporter::$getBodyElementCallback, $browser);
         }
 
         return $browser->driver->findElement(WebDriverBy::tagName('body'));
@@ -106,15 +107,15 @@ class ReportScreenshot implements ReportScreenshotContract
      * @return Browser
      * @throws \ImagickException
      */
-    protected function reportScreenCombined(Browser $browser, string $filename)
+    protected function reportScreenCombined(Browser $browser, string $filename): Browser
     {
-        $windowSize = $browser->driver->manage()->window()->getSize();
+        $windowSize   = $browser->driver->manage()->window()->getSize();
         $windowHeight = $windowSize->getHeight();
-        $body = $this->getBodyElement($browser);
-        $fullHeight = $body->getSize()->getHeight();
-        $counter = 0;
-        $offset = 0;
-        $files = [];
+        $body         = $this->getBodyElement($browser);
+        $fullHeight   = $body->getSize()->getHeight();
+        $counter      = 0;
+        $offset       = 0;
+        $files        = [];
         while ($offset < $fullHeight) {
             $browser->driver->executeScript('window.scrollTo(0, ' . $offset . ');');
             if ($windowHeight > ($needCapture = ($fullHeight - $offset))) {
@@ -166,7 +167,7 @@ class ReportScreenshot implements ReportScreenshotContract
                 $suffix = $suffix . '-' . Str::random();
             }
 
-            return $this->fileName($browser, $filename, $suffix);
+            return $this->fileName($browser, $filename, (string) $suffix);
         }
 
         return $newFilename;

@@ -1,10 +1,10 @@
 <?php
 
-namespace ThinkOne\LaravelDuskReporter\Generation;
+namespace LaravelDuskReporter\Generation;
 
 use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
-use ThinkOne\LaravelDuskReporter\Reporter;
+use LaravelDuskReporter\Reporter;
 
 class ReportFile implements ReportFileContract
 {
@@ -23,12 +23,17 @@ class ReportFile implements ReportFileContract
     public function __construct(Reporter $reporter, string $name)
     {
         $this->reporter = $reporter;
-        $this->name = $name;
+        $this->name     = $name;
 
         $this->reporter->addToTableOfContents($this->fileName());
     }
 
-    public function setNewLine(?string $newLine): self
+    /**
+     * @param string|null $newLine
+     *
+     * @return $this
+     */
+    public function setNewLine(?string $newLine): static
     {
         $this->newLine = is_string($newLine) ? $newLine : PHP_EOL;
 
@@ -43,13 +48,13 @@ class ReportFile implements ReportFileContract
         $filePath = $this->reporter->reportFileName($this->fileName());
         clearstatcache();
 
-        return ! (file_exists($filePath) && filesize($filePath));
+        return !(file_exists($filePath) && filesize($filePath));
     }
 
     /**
      * @inheritDoc
      */
-    public function raw(string $content = '', $newLine = false): self
+    public function raw(string $content = '', bool|string $newLine = false): static
     {
         return $this->addContent($content, $newLine);
     }
@@ -57,7 +62,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function h1(string $content = '', $newLine = true): self
+    public function h1(string $content = '', bool|string $newLine = true): static
     {
         return $this->addContent("# {$content}", $newLine);
     }
@@ -65,7 +70,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function h2(string $content = '', $newLine = true): self
+    public function h2(string $content = '', bool|string $newLine = true): static
     {
         return $this->addContent("## {$content}", $newLine);
     }
@@ -73,7 +78,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function h3(string $content = '', $newLine = true): self
+    public function h3(string $content = '', bool|string $newLine = true): static
     {
         return $this->addContent("### {$content}", $newLine);
     }
@@ -81,7 +86,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function h4(string $content = '', $newLine = true): self
+    public function h4(string $content = '', bool|string $newLine = true): static
     {
         return $this->addContent("#### {$content}", $newLine);
     }
@@ -89,7 +94,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function h5(string $content = '', $newLine = true): self
+    public function h5(string $content = '', bool|string $newLine = true): static
     {
         return $this->addContent("##### {$content}", $newLine);
     }
@@ -97,7 +102,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function h6(string $content = '', $newLine = true): self
+    public function h6(string $content = '', bool|string $newLine = true): static
     {
         return $this->addContent("###### {$content}", $newLine);
     }
@@ -105,7 +110,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function br(int $count = 1): self
+    public function br(int $count = 1): static
     {
         foreach (range(1, $count) as $num) {
             $this->addContent('', true);
@@ -117,7 +122,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function image(string $url, string $alt = '', $newLine = true): self
+    public function image(string $url, string $alt = '', bool|string $newLine = true): static
     {
         return $this->addContent("![{$alt}]({$url})", $newLine);
     }
@@ -125,7 +130,7 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function link(string $url, string $text = '', $newLine = true): self
+    public function link(string $url, string $text = '', bool|string $newLine = true): static
     {
         return $this->addContent("[{$text}]({$url})", $newLine);
     }
@@ -133,8 +138,12 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null, $newLine = true): self
+    public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null, bool|string $newLine = true): static
     {
+        if ($this->reporter->isScreenshotsDisabled()) {
+            return $this;
+        }
+
         $filename = $filepath = $this->reporter->screenshoter()->make($browser, $this->fileName(), $resize, $suffix);
 
         if ($this->reporter->useScreenshotRelativePath()) {
@@ -144,11 +153,17 @@ class ReportFile implements ReportFileContract
         return $this->addContent("![{$filename}](./{$filepath})", $newLine);
     }
 
+    /**
+     * @return string
+     */
     public function fileName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @return string
+     */
     public function filePrefix(): string
     {
         $array = array_reverse(explode('/', $this->fileName()));
@@ -159,11 +174,11 @@ class ReportFile implements ReportFileContract
     /**
      * Save content
      * @param string $content
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    protected function addContent(string $content = '', $newLine = true): self
+    protected function addContent(string $content = '', bool|string $newLine = true): static
     {
         $newLineText = '';
         if ($newLine) {
@@ -183,12 +198,12 @@ class ReportFile implements ReportFileContract
      */
     protected function appendToFile(string $content): void
     {
-        if (! $this->reporter->isReportingDisabled()) {
+        if (!$this->reporter->isReportingDisabled()) {
             $filePath = $this->reporter->reportFileName($this->fileName());
 
             $directoryPath = dirname($filePath);
 
-            if (! is_dir($directoryPath)) {
+            if (!is_dir($directoryPath)) {
                 mkdir($directoryPath, 0777, true);
             }
 

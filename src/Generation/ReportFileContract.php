@@ -1,6 +1,6 @@
 <?php
 
-namespace ThinkOne\LaravelDuskReporter\Generation;
+namespace LaravelDuskReporter\Generation;
 
 use Laravel\Dusk\Browser;
 
@@ -11,102 +11,102 @@ interface ReportFileContract
      * Add raw string
      *
      * @param string $content
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function raw(string $content = '', $newLine = false): self;
+    public function raw(string $content = '', bool|string $newLine = false): static;
 
     /**
      * Add header #1
      *
      * @param string $content
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function h1(string $content = '', $newLine = true): self;
+    public function h1(string $content = '', bool|string $newLine = true): static;
 
     /**
      * Add header #2
      *
      * @param string $content
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function h2(string $content = '', $newLine = true): self;
+    public function h2(string $content = '', bool|string $newLine = true): static;
 
     /**
      * Add header #3
      *
      * @param string $content
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function h3(string $content = '', $newLine = true): self;
+    public function h3(string $content = '', bool|string $newLine = true): static;
 
     /**
      * Add header #4
      *
      * @param string $content
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function h4(string $content = '', $newLine = true): self;
+    public function h4(string $content = '', bool|string $newLine = true): static;
 
     /**
      * Add header #5
      *
      * @param string $content
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function h5(string $content = '', $newLine = true): self;
+    public function h5(string $content = '', bool|string $newLine = true): static;
 
     /**
      * Add header #6
      *
      * @param string $content
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function h6(string $content = '', $newLine = true): self;
+    public function h6(string $content = '', bool|string $newLine = true): static;
 
     /**
      * Add break line
      *
      * @param int $count
      *
-     * @return $this
+     * @return static
      */
-    public function br(int $count = 1): self;
+    public function br(int $count = 1): static;
 
     /**
      * Add Image
      *
      * @param string $url
      * @param string $alt
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function image(string $url, string $alt = '', $newLine = true): self;
+    public function image(string $url, string $alt = '', bool|string $newLine = true): static;
 
     /**
      * Add Link
      *
      * @param string $url
      * @param string $text
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function link(string $url, string $text = '', $newLine = true): self;
+    public function link(string $url, string $text = '', bool|string $newLine = true): static;
 
     /**
      * Make screenshot
@@ -114,18 +114,18 @@ interface ReportFileContract
      * @param Browser $browser
      * @param string|null $resize
      * @param string|null $suffix
-     * @param bool $newLine
+     * @param bool|string $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null,  $newLine = true): self;
+    public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null,  bool|string $newLine = true): static;
 
     /**
      * @param string|null $newLine
      *
-     * @return $this
+     * @return static
      */
-    public function setNewLine(?string $newLine): self;
+    public function setNewLine(?string $newLine): static;
 
     /**
      * @return bool

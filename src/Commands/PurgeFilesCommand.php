@@ -1,10 +1,10 @@
 <?php
 
-namespace ThinkOne\LaravelDuskReporter\Commands;
+namespace LaravelDuskReporter\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use ThinkOne\LaravelDuskReporter\LaravelDuskReporter;
+use LaravelDuskReporter\LaravelDuskReporter;
 
 class PurgeFilesCommand extends Command
 {
@@ -53,7 +53,7 @@ class PurgeFilesCommand extends Command
      */
     protected function purgeDebuggingFiles($path)
     {
-        if (! is_dir($path)) {
+        if (!is_dir($path)) {
             $this->warn("Unable to purge missing directory [{$path}].");
 
             return;

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ThinkOne\LaravelDuskReporter\Generation;
+namespace LaravelDuskReporter\Generation;
 
 use Laravel\Dusk\Browser;
 

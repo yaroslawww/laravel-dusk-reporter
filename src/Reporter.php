@@ -1,13 +1,12 @@
 <?php
 
-
-namespace ThinkOne\LaravelDuskReporter;
+namespace LaravelDuskReporter;
 
 use Closure;
-use ThinkOne\LaravelDuskReporter\Generation\ReportFile;
-use ThinkOne\LaravelDuskReporter\Generation\ReportFileContract;
-use ThinkOne\LaravelDuskReporter\Generation\ReportScreenshot;
-use ThinkOne\LaravelDuskReporter\Generation\ReportScreenshotContract;
+use LaravelDuskReporter\Generation\ReportFile;
+use LaravelDuskReporter\Generation\ReportFileContract;
+use LaravelDuskReporter\Generation\ReportScreenshot;
+use LaravelDuskReporter\Generation\ReportScreenshotContract;
 
 class Reporter
 {
@@ -21,21 +20,28 @@ class Reporter
 
     /**
      * The directory that will contain any screenshots.
-     * If null or empty than will be used "$storeBuildAt" field
+     * If null or empty than will be used "$storeBuildAt" field.
      *
      * @var ?string
      */
     public static ?string $storeScreenshotAt = null;
 
     /**
-     * Use relative path to screenshot
+     * Use relative path to screenshot.
      *
      * @var bool
      */
     public static bool $screenshotRelativePath = true;
 
     /**
-     * Disable reporting
+     * Disable screenshots making.
+     *
+     * @var bool
+     */
+    public static bool $disableScreenshots = false;
+
+    /**
+     * Fully disable reporting.
      *
      * @var bool
      */
@@ -49,7 +55,7 @@ class Reporter
     public static ?Closure $getBodyElementCallback = null;
 
     /**
-     * Get new report file
+     * Get new report file.
      *
      * @param string $name
      *
@@ -61,7 +67,7 @@ class Reporter
     }
 
     /**
-     * Get new screenshot manager
+     * Get new screenshot manager.
      *
      * @return ReportScreenshotContract
      */
@@ -91,7 +97,7 @@ class Reporter
      */
     public function storeBuildAt(string $path = ''): string
     {
-        return rtrim(static::$storeBuildAt, '/') . ($path ? ("/" . ltrim($path, '/')) : '');
+        return rtrim(static::$storeBuildAt, '/') . ($path ? ('/' . ltrim($path, '/')) : '');
     }
 
     /**
@@ -104,11 +110,11 @@ class Reporter
     public function storeScreenshotAt(string $path = ''): string
     {
         $screenshotDir = static::$storeScreenshotAt;
-        if (! $screenshotDir) {
+        if (!$screenshotDir) {
             $screenshotDir = $this->storeBuildAt();
         }
 
-        return rtrim($screenshotDir, '/') . ($path ? ("/" . ltrim($path, '/')) : '');
+        return rtrim($screenshotDir, '/') . ($path ? ('/' . ltrim($path, '/')) : '');
     }
 
     /**
@@ -119,6 +125,16 @@ class Reporter
     public function useScreenshotRelativePath(): bool
     {
         return static::$screenshotRelativePath && ($this->storeScreenshotAt() == $this->storeBuildAt());
+    }
+
+    /**
+     * Check is screenshots disabled
+     *
+     * @return bool
+     */
+    public function isScreenshotsDisabled(): bool
+    {
+        return static::$disableScreenshots;
     }
 
     /**
@@ -140,19 +156,19 @@ class Reporter
      */
     public function addToTableOfContents(string $name): void
     {
-        if (! $this->isReportingDisabled()) {
+        if (!$this->isReportingDisabled()) {
             $reportFile = $this->reportFileName($name, true);
 
             $filePath = "{$this->storeBuildAt()}/index.md";
 
             $directoryPath = dirname($filePath);
 
-            if (! is_dir($directoryPath)) {
+            if (!is_dir($directoryPath)) {
                 mkdir($directoryPath, 0777, true);
             }
 
-            if (! file_exists($filePath)) {
-                file_put_contents($filePath, "Please install the extension so that images and links are displayed correctly: [Markdown Viewer / Browser Extension](https://github.com/simov/markdown-viewer#markdown-viewer--browser-extension)." . PHP_EOL . PHP_EOL);
+            if (!file_exists($filePath)) {
+                file_put_contents($filePath, 'Please install the extension so that images and links are displayed correctly: [Markdown Viewer / Browser Extension](https://github.com/simov/markdown-viewer#markdown-viewer--browser-extension).' . PHP_EOL . PHP_EOL);
             }
 
 

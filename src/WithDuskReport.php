@@ -1,10 +1,12 @@
 <?php
 
 
-namespace ThinkOne\LaravelDuskReporter;
+namespace LaravelDuskReporter;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
-use ThinkOne\LaravelDuskReporter\Generation\ReportFileContract;
+use LaravelDuskReporter\Exceptions\LaravelDuskReporterException;
+use LaravelDuskReporter\Generation\ReportFileContract;
 
 trait WithDuskReport
 {
@@ -21,8 +23,8 @@ trait WithDuskReport
      */
     protected function duskReportFile(?string $initialisationFilename = null, ?\Closure $initialisationCallback = null): ReportFileContract
     {
-        if (! $this->globalDuskTestReportFile) {
-            if (! $initialisationFilename) {
+        if (!$this->globalDuskTestReportFile) {
+            if (!$initialisationFilename) {
                 throw new LaravelDuskReporterException('On initialisation you should specify $initialisationFilename');
             }
             $this->globalDuskTestReportFile = $this->newDuskReportFile($initialisationFilename);
@@ -53,9 +55,17 @@ trait WithDuskReport
      */
     protected function duskReportFileName(): string
     {
-        $names = array_reverse(explode('\\', get_class($this)));
+        $names            = array_reverse(explode('\\', get_class($this)));
         $reportFolderName = rtrim(Str::ucfirst(Str::camel(($names[1] ?? '') . $names[0])), '/');
 
-        return "{$reportFolderName}/{$this->getName(true)}";
+        if (method_exists($this, 'getDuskReportFileName')) {
+            $name = $this->getDuskReportFileName();
+        } elseif (method_exists($this, 'getName')) {
+            $name = $this->getName();
+        } else {
+            $name = Carbon::now()->format('Y_m_d_h_i_s-') . Str::random(60);
+        }
+
+        return "{$reportFolderName}/{$name}";
     }
 }

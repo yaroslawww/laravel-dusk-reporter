@@ -1,8 +1,8 @@
 <?php
 
-namespace ThinkOne\LaravelDuskReporter;
+namespace LaravelDuskReporter;
 
-use ThinkOne\LaravelDuskReporter\Commands\PurgeFilesCommand;
+use LaravelDuskReporter\Commands\PurgeFilesCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -17,9 +17,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
     public function register()
     {
-        Reporter::$stopReporting = (bool) getenv('DUSK_REPORT_DISABLED');
+        Reporter::$stopReporting      = (bool) getenv('DUSK_REPORT_DISABLED');
+        Reporter::$disableScreenshots = (bool) getenv('DUSK_SCREENSHOTS_DISABLED');
         $this->app->bind(Reporter::class, function ($app) {
-            if (! Reporter::$storeBuildAt) {
+            if (!Reporter::$storeBuildAt) {
                 Reporter::$storeBuildAt = base_path(getenv('DUSK_REPORT_PATH') ?: 'storage/laravel-dusk-reporter');
             }
 

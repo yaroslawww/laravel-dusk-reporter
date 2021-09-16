@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ThinkOne\LaravelDuskReporter;
+namespace LaravelDuskReporter\Exceptions;
 
 class LaravelDuskReporterException extends \Exception
 {

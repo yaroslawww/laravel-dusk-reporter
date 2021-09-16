@@ -1,6 +1,6 @@
 <?php
 
-namespace ThinkOne\LaravelDuskReporter\Tests;
+namespace LaravelDuskReporter\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -14,7 +14,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            \ThinkOne\LaravelDuskReporter\ServiceProvider::class,
+            \LaravelDuskReporter\ServiceProvider::class,
         ];
     }
 
