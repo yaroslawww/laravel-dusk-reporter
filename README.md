@@ -1,5 +1,8 @@
 # Report generator for Laravel Dusk
 
+[![Packagist License](https://img.shields.io/packagist/l/yaroslawww/laravel-dusk-reporter?style=flat-square)](https://github.com/yaroslawww/laravel-dusk-reporter/blob/master/LICENSE.md)
+[![Packagist Version](https://img.shields.io/packagist/v/yaroslawww/laravel-dusk-reporter?style=flat-square)](https://packagist.org/packages/yaroslawww/laravel-dusk-reporter)
+
 Report will be saved in `.md` files.
 
 ## Installation
