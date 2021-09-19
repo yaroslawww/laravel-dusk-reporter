@@ -19,7 +19,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         Reporter::$stopReporting      = (bool) getenv('DUSK_REPORT_DISABLED');
         Reporter::$disableScreenshots = (bool) getenv('DUSK_SCREENSHOTS_DISABLED');
-        $this->app->bind(Reporter::class, function ($app) {
+        $this->app->bind(Reporter::class, function () {
             if (!Reporter::$storeBuildAt) {
                 Reporter::$storeBuildAt = base_path(getenv('DUSK_REPORT_PATH') ?: 'storage/laravel-dusk-reporter');
             }

@@ -123,7 +123,7 @@ class ReportScreenshot implements ReportScreenshotContract
                 $browser->driver->executeScript('window.scrollTo(0, document.body.scrollHeight);');
             }
             $browser->screenshot($screenName = "{$filename}_tmp-{$counter}");
-            $files[] = $filePath = sprintf('%s/%s.' . $this->fileExt, rtrim($browser::$storeScreenshotsAt, '/'), $screenName);
+            $files[] = sprintf('%s/%s.' . $this->fileExt, rtrim($browser::$storeScreenshotsAt, '/'), $screenName);
             $counter++;
             $offset += $windowHeight;
         }
