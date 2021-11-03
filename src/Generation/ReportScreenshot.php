@@ -109,6 +109,12 @@ class ReportScreenshot implements ReportScreenshotContract
      */
     protected function reportScreenCombined(Browser $browser, string $filename): Browser
     {
+        if (!extension_loaded('imagick')) {
+            $browser->screenshot($filename);
+
+            return $browser;
+        }
+
         $windowSize   = $browser->driver->manage()->window()->getSize();
         $windowHeight = $windowSize->getHeight();
         $body         = $this->getBodyElement($browser);
