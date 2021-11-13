@@ -154,6 +154,30 @@ class ReportFile implements ReportFileContract
     }
 
     /**
+     * @inheritDoc
+     */
+    public function screenshotWithVisibleScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static
+    {
+        return $this->screenshot($browser, null, $suffix, $newLine);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function screenshotWithFitScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static
+    {
+        return $this->screenshot($browser, ReportScreenshotContract::RESIZE_FIT, $suffix, $newLine);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function screenshotWithCombineScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static
+    {
+        return $this->screenshot($browser, ReportScreenshotContract::RESIZE_COMBINE, $suffix, $newLine);
+    }
+
+    /**
      * @return string
      */
     public function fileName(): string
@@ -173,6 +197,7 @@ class ReportFile implements ReportFileContract
 
     /**
      * Save content
+     *
      * @param string $content
      * @param bool|string $newLine
      *
@@ -192,6 +217,7 @@ class ReportFile implements ReportFileContract
 
     /**
      * Append content to file
+     *
      * @param string $content
      *
      * @return void

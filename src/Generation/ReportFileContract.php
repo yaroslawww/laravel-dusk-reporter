@@ -121,6 +121,39 @@ interface ReportFileContract
     public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null,  bool|string $newLine = true): static;
 
     /**
+     * Make screenshot with visible screen
+     *
+     * @param Browser $browser
+     * @param string|null $suffix
+     * @param bool|string $newLine
+     *
+     * @return static
+     */
+    public function screenshotWithVisibleScreen(Browser $browser, ?string $suffix = null,  bool|string $newLine = true): static;
+
+    /**
+     * Make screenshot with fit screen
+     *
+     * @param Browser $browser
+     * @param string|null $suffix
+     * @param bool|string $newLine
+     *
+     * @return static
+     */
+    public function screenshotWithFitScreen(Browser $browser, ?string $suffix = null,  bool|string $newLine = true): static;
+
+    /**
+     * Make screenshot with "combine" screen
+     *
+     * @param Browser $browser
+     * @param string|null $suffix
+     * @param bool|string $newLine
+     *
+     * @return static
+     */
+    public function screenshotWithCombineScreen(Browser $browser, ?string $suffix = null,  bool|string $newLine = true): static;
+
+    /**
      * @param string|null $newLine
      *
      * @return static

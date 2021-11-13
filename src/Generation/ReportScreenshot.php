@@ -1,6 +1,5 @@
 <?php
 
-
 namespace LaravelDuskReporter\Generation;
 
 use Exception;
@@ -35,8 +34,6 @@ class ReportScreenshot implements ReportScreenshotContract
         $realFileName = "{$filename}.{$this->fileExt}";
 
         if (!$this->reporter->isReportingDisabled()) {
-            $resize = is_string($resize) ? $resize : static::RESIZE_FIT;
-
             $defaultStoreScreenshotsAt = $browser::$storeScreenshotsAt;
 
             $browser::$storeScreenshotsAt = $this->reporter->storeScreenshotAt();
@@ -45,20 +42,11 @@ class ReportScreenshot implements ReportScreenshotContract
 
             $realFileName = "{$filename}.{$this->fileExt}";
 
-            if ($resize == static::RESIZE_COMBINE) {
-                $this->reportScreenCombined($browser, $filename);
-            } else {
-                $defaultSize = $browser->driver->manage()->window()->getSize();
-                if ($resize == static::RESIZE_FIT) {
-                    $browser = $this->fitContent($browser);
-                }
-
-                $browser->screenshot($filename);
-
-                if ($resize == static::RESIZE_FIT && $defaultSize) {
-                    $browser->resize($defaultSize->getWidth(), $defaultSize->getHeight());
-                }
-            }
+            match ($resize) {
+                static::RESIZE_COMBINE => $this->reportScreenCombined($browser, $filename),
+                static::RESIZE_FIT     => $this->reportScreenFit($browser, $filename),
+                default                => $browser->screenshot($filename),
+            };
 
             $browser::$storeScreenshotsAt = $defaultStoreScreenshotsAt;
         }
@@ -96,6 +84,21 @@ class ReportScreenshot implements ReportScreenshotContract
         }
 
         return $browser->driver->findElement(WebDriverBy::tagName('body'));
+    }
+
+    /**
+     * Create fit report.
+     *
+     * @param Browser $browser
+     * @param string $filename
+     *
+     * @return Browser
+     */
+    protected function reportScreenFit(Browser $browser, string $filename): Browser
+    {
+        $initialSize = $browser->driver->manage()->window()->getSize();
+
+        return $this->fitContent($browser)->screenshot($filename)->resize($initialSize->getWidth(), $initialSize->getHeight());
     }
 
     /**
@@ -154,6 +157,7 @@ class ReportScreenshot implements ReportScreenshotContract
 
     /**
      * Find screenshot filename without overriding
+     *
      * @param Browser $browser
      * @param string $filename
      * @param string|null $suffix
