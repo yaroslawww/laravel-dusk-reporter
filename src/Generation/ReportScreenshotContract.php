@@ -8,6 +8,11 @@ use Laravel\Dusk\Browser;
 interface ReportScreenshotContract
 {
     /**
+     * Type "VISIBLE" - screen only visible part of browser.
+     */
+    const RESIZE_VISIBLE = 'visible';
+
+    /**
      * Type "FIT" - fits browser then make screenshot
      */
     const RESIZE_FIT = 'fit';
