@@ -30,15 +30,15 @@ php artisan dusk-reporter:purge -y
 php artisan dusk-reporter:purge --path="/my/project/report"
 ```
 
-#### 1. Use trait `WithDuskReport` in your dusk test case. This is optional, but it will be easy to rename the file.
+#### 1. Use trait `TestWithDuskReport` in your dusk test case. This is optional, but it will be easy to rename the file.
 
 ```injectablephp
 //...
-use LaravelDuskReporter\WithDuskReport;
+use LaravelDuskReporter\TestWithDuskReport;
 
 abstract class DuskTestCase extends BaseTestCase
 {
-    use WithDuskReport;
+    use TestWithDuskReport;
     
     //...
     
@@ -162,14 +162,16 @@ class HomePageTest extends DuskTestCase {
         parent::setUp();
         // ...
 
-        $this->duskReportFile('Marketing/home-page', function (ReportFileContract $file) {
+        /*$this->duskReportFile('Marketing/home-page', function (ReportFileContract $file) {
             $file->h1( 'Home marketing page' )->br();
-        });
+        });*/
+        // or
+        $this->duskReportSetUpUsingTestClassName( 'Marketing' );
     }
 
     /**  @test */
     public function open_not_logged_user() {
-
+        $this->duskReportSetHeadingFromTestMethod(__FUNCTION__);
         $this->browse( function ( Browser $browser ) {
             $browser->visit( new HomePage() )
                     // ...
@@ -181,8 +183,9 @@ class HomePageTest extends DuskTestCase {
         } );
     }
 
-    /**  @test */
-    public function page_has_video() {
+    public function testPageHasVideo() {
+        $this->duskReportSetHeadingFromTestMethod(__FUNCTION__);
+        
         $this->browse( function ( Browser $browser ) {
             $browser->visit( new HomePage() )
                     ->assertPresent( '@marketing-video' );

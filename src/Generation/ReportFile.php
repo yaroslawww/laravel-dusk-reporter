@@ -122,6 +122,27 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
+    public function list(array|\ArrayAccess $items = [], bool|string $newLine = true, string $styleType = '-'): static
+    {
+        foreach ($items as $item) {
+            $this->listItem($item, true, $styleType);
+        }
+        if ($newLine) {
+            $this->br();
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function listItem(string $content = '', bool|string $newLine = true, string $styleType = '-'): static
+    {
+        return $this->addContent("{$styleType} {$content}", $newLine);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function image(string $url, string $alt = '', bool|string $newLine = true): static
     {
         return $this->addContent("![{$alt}]({$url})", $newLine);

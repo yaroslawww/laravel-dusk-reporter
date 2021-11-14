@@ -87,6 +87,28 @@ interface ReportFileContract
     public function br(int $count = 1): static;
 
     /**
+     * Add list
+     *
+     * @param array|\ArrayAccess|String[] $items
+     * @param bool|string $newLine
+     * @param string $styleType
+     *
+     * @return static
+     */
+    public function list(array|\ArrayAccess $items = [], bool|string $newLine = true, string $styleType = '-'): static;
+
+    /**
+     * Add list item
+     *
+     * @param string $content
+     * @param bool|string $newLine
+     * @param string $styleType
+     *
+     * @return static
+     */
+    public function listItem(string $content = '', bool|string $newLine = true, string $styleType = '-'): static;
+
+    /**
      * Add Image
      *
      * @param string $url
@@ -118,7 +140,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null,  bool|string $newLine = true): static;
+    public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null, bool|string $newLine = true): static;
 
     /**
      * Make screenshot with visible screen
@@ -129,7 +151,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function screenshotWithVisibleScreen(Browser $browser, ?string $suffix = null,  bool|string $newLine = true): static;
+    public function screenshotWithVisibleScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static;
 
     /**
      * Make screenshot with fit screen
@@ -140,7 +162,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function screenshotWithFitScreen(Browser $browser, ?string $suffix = null,  bool|string $newLine = true): static;
+    public function screenshotWithFitScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static;
 
     /**
      * Make screenshot with "combine" screen
@@ -151,7 +173,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function screenshotWithCombineScreen(Browser $browser, ?string $suffix = null,  bool|string $newLine = true): static;
+    public function screenshotWithCombineScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static;
 
     /**
      * @param string|null $newLine
