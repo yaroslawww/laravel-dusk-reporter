@@ -92,7 +92,7 @@ trait TestWithDuskReport
             }
 
             $parts    = explode('/', $name);
-            $backPath = 'index.md';
+            $backPath = Reporter::getValidFileName(Reporter::$indexFileBaseName);
             for ($i = 1; $i < count($parts); $i++) {
                 $backPath = "../{$backPath}";
             }

@@ -12,7 +12,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             $this->commands([
                 PurgeFilesCommand::class,
             ]);
+            $this->publishes([
+                __DIR__.'/../resources/lang' => resource_path('lang/vendor/dusk-reporter'),
+            ]);
         }
+
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'dusk-reporter');
     }
 
     public function register()

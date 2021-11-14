@@ -3,6 +3,7 @@
 namespace LaravelDuskReporter;
 
 use Closure;
+use Illuminate\Support\Str;
 use LaravelDuskReporter\Generation\ReportFile;
 use LaravelDuskReporter\Generation\ReportFileContract;
 use LaravelDuskReporter\Generation\ReportScreenshot;
@@ -10,6 +11,19 @@ use LaravelDuskReporter\Generation\ReportScreenshotContract;
 
 class Reporter
 {
+    /**
+     * Report files extension.
+     *
+     * @var string
+     */
+    public static string $fileExt = 'md';
+
+    /**
+     * Index file base name.
+     *
+     * @var string
+     */
+    public static string $indexFileBaseName = 'index';
 
     /**
      * The directory that will contain any build files.
@@ -53,6 +67,26 @@ class Reporter
      * @var Closure|null
      */
     public static ?Closure $getBodyElementCallback = null;
+
+    /**
+     * Check is report file name valid, and if not - amend it.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    public static function getValidFileName(string $name): string
+    {
+        $fileExt = static::$fileExt;
+        if (empty($name)) {
+            $name = Str::random();
+        }
+        if (Str::endsWith($name, ".{$fileExt}")) {
+            $name .= ".{$fileExt}";
+        }
+
+        return $name;
+    }
 
     /**
      * Get new report file.
@@ -148,7 +182,7 @@ class Reporter
     }
 
     /**
-     * Add File to table of contents
+     * Add file to table of contents.
      *
      * @param string $name
      *
@@ -159,7 +193,7 @@ class Reporter
         if (!$this->isReportingDisabled()) {
             $reportFile = $this->reportFileName($name, true);
 
-            $filePath = "{$this->storeBuildAt()}/index.md";
+            $filePath = static::getValidFileName("{$this->storeBuildAt()}/" . static::$indexFileBaseName);
 
             $directoryPath = dirname($filePath);
 
@@ -168,12 +202,10 @@ class Reporter
             }
 
             if (!file_exists($filePath)) {
-                file_put_contents($filePath, 'Please install the extension so that images and links are displayed correctly: [Markdown Viewer / Browser Extension](https://github.com/simov/markdown-viewer#markdown-viewer--browser-extension).' . PHP_EOL . PHP_EOL);
+                file_put_contents($filePath, '# ' . trans('dusk-reporter::report.table_of_contents') . PHP_EOL . PHP_EOL);
             }
 
-
-
-            if (strpos(file_get_contents($filePath), $reportFile) === false) {
+            if (!str_contains(file_get_contents($filePath), $reportFile)) {
                 file_put_contents($filePath, "- [{$reportFile}]({$reportFile})" . PHP_EOL, FILE_APPEND | LOCK_EX);
             }
         }
@@ -189,6 +221,6 @@ class Reporter
      */
     public function reportFileName(string $name, bool $relative = false): string
     {
-        return ($relative ? '' : "{$this->storeBuildAt()}/") . "{$name}.md";
+        return ($relative ? '' : "{$this->storeBuildAt()}/") . static::getValidFileName($name);
     }
 }
