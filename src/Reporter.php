@@ -81,7 +81,7 @@ class Reporter
         if (empty($name)) {
             $name = Str::random();
         }
-        if (Str::endsWith($name, ".{$fileExt}")) {
+        if (!Str::endsWith($name, ".{$fileExt}")) {
             $name .= ".{$fileExt}";
         }
 

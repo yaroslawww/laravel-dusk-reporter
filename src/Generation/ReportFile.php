@@ -6,13 +6,12 @@ use Illuminate\Support\Str;
 use Laravel\Dusk\Browser;
 use LaravelDuskReporter\Reporter;
 
-class ReportFile implements ReportFileContract
-{
+class ReportFile implements ReportFileContract {
     protected Reporter $reporter;
 
     protected string $name;
 
-    protected string $newLine = PHP_EOL;
+    protected string $newLine;
 
     /**
      * ReportFile constructor.
@@ -20,12 +19,12 @@ class ReportFile implements ReportFileContract
      * @param Reporter $reporter
      * @param string $name
      */
-    public function __construct(Reporter $reporter, string $name)
-    {
+    public function __construct( Reporter $reporter, string $name ) {
         $this->reporter = $reporter;
         $this->name     = $name;
+        $this->setNewLine();
 
-        $this->reporter->addToTableOfContents($this->fileName());
+        $this->reporter->addToTableOfContents( $this->fileName() );
     }
 
     /**
@@ -33,9 +32,8 @@ class ReportFile implements ReportFileContract
      *
      * @return $this
      */
-    public function setNewLine(?string $newLine): static
-    {
-        $this->newLine = is_string($newLine) ? $newLine : PHP_EOL;
+    public function setNewLine( ?string $newLine = null ): static {
+        $this->newLine = is_string( $newLine ) ? $newLine : '<br>' . PHP_EOL;
 
         return $this;
     }
@@ -43,77 +41,75 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function isEmpty(): bool
-    {
-        $filePath = $this->reporter->reportFileName($this->fileName());
+    public function isEmpty(): bool {
+        $filePath = $this->reporter->reportFileName( $this->fileName() );
         clearstatcache();
 
-        return !(file_exists($filePath) && filesize($filePath));
+        return ! ( file_exists( $filePath ) && filesize( $filePath ) );
     }
 
     /**
      * @inheritDoc
      */
-    public function raw(string $content = '', bool|string $newLine = false): static
-    {
-        return $this->addContent($content, $newLine);
+    public function raw( string $content = '', bool|string $newLine = false ): static {
+        return $this->addContent( $content, $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function h1(string $content = '', bool|string $newLine = true): static
-    {
-        return $this->addContent("# {$content}", $newLine);
+    public function h1( string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL ): static {
+        return $this->addContent( "# {$content}", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function h2(string $content = '', bool|string $newLine = true): static
-    {
-        return $this->addContent("## {$content}", $newLine);
+    public function h2( string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL ): static {
+        return $this->addContent( "## {$content}", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function h3(string $content = '', bool|string $newLine = true): static
-    {
-        return $this->addContent("### {$content}", $newLine);
+    public function h3( string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL ): static {
+        return $this->addContent( "### {$content}", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function h4(string $content = '', bool|string $newLine = true): static
-    {
-        return $this->addContent("#### {$content}", $newLine);
+    public function h4( string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL ): static {
+        return $this->addContent( "#### {$content}", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function h5(string $content = '', bool|string $newLine = true): static
-    {
-        return $this->addContent("##### {$content}", $newLine);
+    public function h5( string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL ): static {
+        return $this->addContent( "##### {$content}", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function h6(string $content = '', bool|string $newLine = true): static
-    {
-        return $this->addContent("###### {$content}", $newLine);
+    public function h6( string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL ): static {
+        return $this->addContent( "###### {$content}", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function br(int $count = 1): static
-    {
-        foreach (range(1, $count) as $num) {
-            $this->addContent('', true);
+    public function p( string $content = '', bool|string $newLine = true ): static {
+        return $this->addContent( $content, $newLine );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function br( int $count = 1, ?string $lineString = null ): static {
+        foreach ( range( 1, $count ) as $num ) {
+            $this->addContent( '', $lineString ?? true );
         }
 
         return $this;
@@ -122,139 +118,122 @@ class ReportFile implements ReportFileContract
     /**
      * @inheritDoc
      */
-    public function list(array|\ArrayAccess $items = [], bool|string $newLine = true, string $styleType = '-'): static
-    {
-        foreach ($items as $item) {
-            $this->listItem($item, true, $styleType);
+    public function list( array|\ArrayAccess $items = [], bool|string $newLine = PHP_EOL, string $styleType = '-' ): static {
+        if ( count( $items ) ) {
+            foreach ( $items as $item ) {
+                $this->listItem( $item, true, $styleType );
+            }
+            if ( $newLine ) {
+                $this->br( lineString: is_string( $newLine ) ? $newLine : null );
+            }
         }
-        if ($newLine) {
-            $this->br();
-        }
+
+        return $this;
     }
 
     /**
      * @inheritDoc
      */
-    public function listItem(string $content = '', bool|string $newLine = true, string $styleType = '-'): static
-    {
-        return $this->addContent("{$styleType} {$content}", $newLine);
+    public function listItem( string $content = '', bool|string $newLine = PHP_EOL, string $styleType = '-' ): static {
+        return $this->addContent( "{$styleType} {$content}", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function image(string $url, string $alt = '', bool|string $newLine = true): static
-    {
-        return $this->addContent("![{$alt}]({$url})", $newLine);
+    public function image( string $url, string $alt = '', bool|string $newLine = true ): static {
+        return $this->addContent( "![{$alt}]({$url})", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function link(string $url, string $text = '', bool|string $newLine = true): static
-    {
-        return $this->addContent("[{$text}]({$url})", $newLine);
+    public function link( string $url, string $text = '', bool|string $newLine = false ): static {
+        return $this->addContent( "[{$text}]({$url})", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function screenshot(Browser $browser, ?string $resize = null, ?string $suffix = null, bool|string $newLine = true): static
-    {
-        if ($this->reporter->isScreenshotsDisabled()) {
+    public function screenshot( Browser $browser, ?string $resize = null, ?string $suffix = null, bool|string $newLine = true ): static {
+        if ( $this->reporter->isScreenshotsDisabled() ) {
             return $this;
         }
 
-        $filename = $filepath = $this->reporter->screenshoter()->make($browser, $this->fileName(), $resize, $suffix);
+        $filename = $filepath = $this->reporter->screenshoter()->make( $browser, $this->fileName(), $resize, $suffix );
 
-        if ($this->reporter->useScreenshotRelativePath()) {
-            $filepath = $this->filePrefix() . Str::afterLast($filepath, $this->filePrefix());
+        if ( $this->reporter->useScreenshotRelativePath() ) {
+            $filepath = $this->filePrefix() . Str::afterLast( $filepath, $this->filePrefix() );
         }
 
-        return $this->addContent("![{$filename}](./{$filepath})", $newLine);
+        return $this->addContent( "![{$filename}](./{$filepath})", $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function screenshotWithVisibleScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static
-    {
-        return $this->screenshot($browser, null, $suffix, $newLine);
+    public function screenshotWithVisibleScreen( Browser $browser, ?string $suffix = null, bool|string $newLine = true ): static {
+        return $this->screenshot( $browser, null, $suffix, $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function screenshotWithFitScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static
-    {
-        return $this->screenshot($browser, ReportScreenshotContract::RESIZE_FIT, $suffix, $newLine);
+    public function screenshotWithFitScreen( Browser $browser, ?string $suffix = null, bool|string $newLine = true ): static {
+        return $this->screenshot( $browser, ReportScreenshotContract::RESIZE_FIT, $suffix, $newLine );
     }
 
     /**
      * @inheritDoc
      */
-    public function screenshotWithCombineScreen(Browser $browser, ?string $suffix = null, bool|string $newLine = true): static
-    {
-        return $this->screenshot($browser, ReportScreenshotContract::RESIZE_COMBINE, $suffix, $newLine);
+    public function screenshotWithCombineScreen( Browser $browser, ?string $suffix = null, bool|string $newLine = true ): static {
+        return $this->screenshot( $browser, ReportScreenshotContract::RESIZE_COMBINE, $suffix, $newLine );
     }
 
     /**
      * @return string
      */
-    public function fileName(): string
-    {
+    public function fileName(): string {
         return $this->name;
     }
 
     /**
      * @return string
      */
-    public function filePrefix(): string
-    {
-        $array = array_reverse(explode('/', $this->fileName()));
-
-        return $array[0] ?? '';
+    public function filePrefix(): string {
+        return Str::afterLast( $this->fileName(), '/' );
     }
 
     /**
-     * Save content
+     * Save content.
      *
      * @param string $content
      * @param bool|string $newLine
      *
      * @return static
      */
-    protected function addContent(string $content = '', bool|string $newLine = true): static
-    {
-        $newLineText = '';
-        if ($newLine) {
-            $newLineText = is_string($newLine) ? $newLine : $this->newLine;
-        }
-
-        $this->appendToFile($content . $newLineText);
-
-        return $this;
+    protected function addContent( string $content = '', bool|string $newLine = true ): static {
+        return $this->appendToFile( $content . ( is_string( $newLine ) ? $newLine : ( $newLine ? $this->newLine : '' ) ) );
     }
 
     /**
-     * Append content to file
+     * Append content to file.
      *
      * @param string $content
      *
-     * @return void
+     * @return static
      */
-    protected function appendToFile(string $content): void
-    {
-        if (!$this->reporter->isReportingDisabled()) {
-            $filePath = $this->reporter->reportFileName($this->fileName());
+    protected function appendToFile( string $content ): static {
+        if ( ! $this->reporter->isReportingDisabled() ) {
+            $filePath = $this->reporter->reportFileName( $this->fileName() );
 
-            $directoryPath = dirname($filePath);
-
-            if (!is_dir($directoryPath)) {
-                mkdir($directoryPath, 0777, true);
+            if ( ! is_dir( $directoryPath = dirname( $filePath ) ) ) {
+                mkdir( $directoryPath, 0777, true );
             }
 
-            file_put_contents($filePath, $content, FILE_APPEND | LOCK_EX);
+            file_put_contents( $filePath, $content, FILE_APPEND | LOCK_EX );
         }
+
+        return $this;
     }
 }

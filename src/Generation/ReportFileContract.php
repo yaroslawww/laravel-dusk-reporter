@@ -25,7 +25,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function h1(string $content = '', bool|string $newLine = true): static;
+    public function h1(string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL): static;
 
     /**
      * Add header #2
@@ -35,7 +35,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function h2(string $content = '', bool|string $newLine = true): static;
+    public function h2(string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL): static;
 
     /**
      * Add header #3
@@ -45,7 +45,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function h3(string $content = '', bool|string $newLine = true): static;
+    public function h3(string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL): static;
 
     /**
      * Add header #4
@@ -55,7 +55,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function h4(string $content = '', bool|string $newLine = true): static;
+    public function h4(string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL): static;
 
     /**
      * Add header #5
@@ -65,7 +65,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function h5(string $content = '', bool|string $newLine = true): static;
+    public function h5(string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL): static;
 
     /**
      * Add header #6
@@ -75,16 +75,27 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function h6(string $content = '', bool|string $newLine = true): static;
+    public function h6(string $content = '', bool|string $newLine = PHP_EOL . PHP_EOL): static;
+
+    /**
+     * Add paragraph
+     *
+     * @param string $content
+     * @param bool|string $newLine
+     *
+     * @return static
+     */
+    public function p(string $content = '', bool|string $newLine = true): static;
 
     /**
      * Add break line
      *
      * @param int $count
+     * @param string|null $lineString
      *
      * @return static
      */
-    public function br(int $count = 1): static;
+    public function br(int $count = 1, ?string $lineString = null): static;
 
     /**
      * Add list
@@ -95,7 +106,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function list(array|\ArrayAccess $items = [], bool|string $newLine = true, string $styleType = '-'): static;
+    public function list(array|\ArrayAccess $items = [], bool|string $newLine = PHP_EOL, string $styleType = '-'): static;
 
     /**
      * Add list item
@@ -106,7 +117,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function listItem(string $content = '', bool|string $newLine = true, string $styleType = '-'): static;
+    public function listItem(string $content = '', bool|string $newLine = PHP_EOL, string $styleType = '-'): static;
 
     /**
      * Add Image
@@ -128,7 +139,7 @@ interface ReportFileContract
      *
      * @return static
      */
-    public function link(string $url, string $text = '', bool|string $newLine = true): static;
+    public function link(string $url, string $text = '', bool|string $newLine = false): static;
 
     /**
      * Make screenshot
