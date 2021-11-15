@@ -88,12 +88,11 @@ namespace Tests\Browser\CPD\Marketing;
 
 class HomePageTest extends DuskTestCase {
     /** @test */
-    public function open_not_logged_user() {
+    public function open_by_not_logged_user() {
         $REPORT = $this->newDuskReportFile()
                        ->h1( 'Home marketing page' )
-                       ->br()->h2( 'Initial data' )->br()
-                       ->raw( "Open page by not logged user" )->br()
-                       ->h2( 'Result' )->br();
+                       ->h2( 'Initial data' )
+                       ->p( "Open page by not logged user" );
     
         $this->browse( function ( Browser $browser ) use ( $REPORT ) {
             $browser->visit( new HomePage() )
@@ -112,36 +111,9 @@ class HomePageTest extends DuskTestCase {
                 ->screenshotWithCombineScreen( $browser,  $suffix = 'additional_screen', $newLine = false);
         } );
         
-        $REPORT->br()->h3('Conclusion')->br()->raw('Test passed.');
+        $REPORT->h3('Conclusion')->p('Test passed.');
     }
 }
-```
-
-By default, you will see report directories tree like this:
-
-```
-- storage
--- laravel-dusk-reporter
---- MarketingHomePageTest
----- open_not_logged_user.md
----- open_not_logged_user_1.png
-```
-
-File `open_not_logged_user.md` will contain this data:
-
-```
-# Home marketing page
-
-## Initial data
-
-Open page by not logged user
-## Result
-
-![MarketingHomePageTest/open_not_logged_user_1](open_not_logged_user_1.png)
-
-### Conclusion
-
-Test passed.
 ```
 
 #### 4. Create report for one test file
@@ -153,17 +125,7 @@ each test). But you can create one file for multiple tests using method `duskRep
 abstract class Page extends BasePage
 {
     use HasDuskReporter;
-    
-    public function reportUserSeePage(Browser $browser, ?string $pageName = null): Browser
-    {
-        static::$duskReporter?->screenshotWithCombineScreen($browser)
-        ->p(
-            'User see page: '
-                . ($pageName ?? Str::title(Str::kebab(Str::beforeLast(class_basename(get_class($this)), 'Page'), ' ')))
-        );
 
-        return $browser;
-    }
 }
 ```
 
@@ -188,7 +150,10 @@ class HomePageTest extends DuskTestCase {
             $browser->visit( new HomePage() )
                     ->assertPresent( '@header' )
                     ->assertPresent( '@footer' )
-                    ->reportUserSeePage();
+                    ->reportUserSeePage()
+                    ->reportAppend( function ( $reporter ) {
+                        $reporter->p( 'My additional note.' );
+                    } );
         } );
     }
 
@@ -207,36 +172,6 @@ class HomePageTest extends DuskTestCase {
     }
 
 }
-```
-
-By default, you will see report directories tree like this:
-
-```
-- storage
--- laravel-dusk-reporter
---- Marketing
----- HomePage.md
----- HomePage.png
----- HomePage.png
-```
-
-File `home-page.md` will contain this data:
-
-```
-# Home marketing page
-
-## Open by not logged user
-
-![Marketing/HomePage_1](HomePage_1.png)
-
-User see page: Home page<br>
-
-## Open page with video
-
-![Marketing/HomePage_2](HomePage_2.png)
-
-Some note<br>
-
 ```
 
 #### 5. Disable reporting
