@@ -83,7 +83,7 @@ trait TestWithDuskReport
         $name = trim($name, '/');
 
         return $this->duskReportFile($name, function (ReportFileContract $file) use ($name, $title) {
-            $file->h1($title ?? Str::title(Str::camel(Str::snake(Str::afterLast($name, '/'), ' '))));
+            $file->h1($title ?? Str::title(Str::snake(Str::afterLast($name, '/'), ' ')));
 
             if (method_exists($this, 'duskReportFileInitialisationContent')) {
                 $this->duskReportFileInitialisationContent($file);
