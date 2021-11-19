@@ -123,7 +123,7 @@ trait TestWithDuskReport
     }
 
     /**
-     * Add new heading to file using method name
+     * Add new heading to file using method name.
      *
      * @param string $methodName
      * @param string $headerType
@@ -137,5 +137,27 @@ trait TestWithDuskReport
             $this->duskReportFile(),
             $headerType,
         ], Str::title(Str::snake(Str::camel(Str::after($methodName, 'test')), ' ')));
+    }
+
+    /**
+     * Set up report file for entry class.
+     *
+     * @param string|null $testHeading
+     *
+     * @return ReportFileContract|null
+     * @throws LaravelDuskReporterException
+     */
+    protected function setUpReportFileForClass(?string $testHeading = 'h2'): ?ReportFileContract
+    {
+        if (property_exists($this, 'duskReportClassFilePath')) {
+            $reporter = $this->duskReportSetUpUsingTestClassName($this->duskReportClassFilePath);
+            if ($testHeading) {
+                $this->duskReportSetHeadingFromTestMethod($this->getName(), $testHeading);
+            }
+
+            return $reporter;
+        }
+
+        return null;
     }
 }

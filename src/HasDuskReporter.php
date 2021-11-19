@@ -17,7 +17,7 @@ trait HasDuskReporter
      *
      * @return void
      */
-    public static function withDuskReporter(ReportFileContract $reporter): void
+    public static function withDuskReporter(?ReportFileContract $reporter): void
     {
         static::$duskReporter = $reporter;
     }

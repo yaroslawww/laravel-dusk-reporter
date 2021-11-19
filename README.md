@@ -130,22 +130,38 @@ abstract class Page extends BasePage
 ```
 
 ```injectablephp
-namespace Tests\Browser\CPD\Marketing;
+namespace Tests\Browser;
 
-class HomePageTest extends DuskTestCase {
+use Database\Seeders\DatabaseDuskCPDSeeder;
+use Facebook\WebDriver\Exception\WebDriverException;
+use Facebook\WebDriver\WebDriverBy;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use LaravelDuskReporter\Reporter;
+use Tests\Browser\Pages\Page;
+use Tests\DuskTestCase;
 
+class ReportableDuskTestCase extends DuskTestCase
+{
     use DatabaseMigrations;
 
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         parent::setUp();
-        // ...
 
-        Page::withDuskReporter($this->duskReportSetUpUsingTestClassName( 'Marketing' ));
+        Page::withDuskReporter( $this->setUpReportFileForClass() );
     }
+}
+```
+
+```injectablephp
+namespace Tests\Browser\Marketing;
+
+class HomePageTest extends ReportableDuskTestCase {
+
+    $duskReportClassFilePath = 'Marketing';
 
     /**  @test */
     public function open_by_not_logged_user() {
-        $this->duskReportSetHeadingFromTestMethod(__FUNCTION__);
         $this->browse( function ( Browser $browser ) {
             $browser->visit( new HomePage() )
                     ->assertPresent( '@header' )
@@ -158,8 +174,6 @@ class HomePageTest extends DuskTestCase {
     }
 
     public function testPageHasVideo() {
-        $this->duskReportSetHeadingFromTestMethod(__FUNCTION__);
-        
         $this->browse( function ( Browser $browser ) {
             $browser->visit( new HomePage() )
                     ->assertPresent( '@marketing-video' );
