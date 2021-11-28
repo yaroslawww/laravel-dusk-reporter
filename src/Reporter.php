@@ -202,11 +202,12 @@ class Reporter
             }
 
             if (!file_exists($filePath)) {
-                file_put_contents($filePath, '# ' . trans('dusk-reporter::report.table_of_contents') . PHP_EOL . PHP_EOL);
+                file_put_contents($filePath, '## ' . trans('dusk-reporter::report.table_of_contents') . PHP_EOL . PHP_EOL);
             }
 
             if (!str_contains(file_get_contents($filePath), $reportFile)) {
-                file_put_contents($filePath, "- [{$reportFile}]({$reportFile})" . PHP_EOL, FILE_APPEND | LOCK_EX);
+                $title = Str::beforeLast($reportFile, '.' . static::$fileExt);
+                file_put_contents($filePath, "- [{$title}]({$reportFile})" . PHP_EOL, FILE_APPEND | LOCK_EX);
             }
         }
     }

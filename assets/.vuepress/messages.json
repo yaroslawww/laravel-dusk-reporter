@@ -1,0 +1,9 @@
+{
+    "site": {
+        "title": "Browser tests result",
+        "description": "Browser tests"
+    },
+    "menu": {
+        "home": "Home"
+    }
+}
