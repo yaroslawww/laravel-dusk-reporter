@@ -1,20 +1,20 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-                           ->notPath( 'assets/*' )
-                           ->in( [
+                           ->notPath('assets/*')
+                           ->in([
                                __DIR__ . '/src',
-                               // __DIR__ . '/config',
+                               __DIR__ . '/resources/lang',
                                __DIR__ . '/tests',
-                           ] )
-                           ->name( '*.php' )
-                           ->notName( '*.blade.php' )
-                           ->ignoreDotFiles( true )
-                           ->ignoreVCS( true );
+                           ])
+                           ->name('*.php')
+                           ->notName('*.blade.php')
+                           ->ignoreDotFiles(true)
+                           ->ignoreVCS(true);
 
 $config = new PhpCsFixer\Config();
 
-return $config->setRules( [
+return $config->setRules([
     '@PSR2'                             => true,
     'array_syntax'                      => [ 'syntax' => 'short' ],
     'ordered_imports'                   => [ 'sort_algorithm' => 'alpha' ],
@@ -34,5 +34,5 @@ return $config->setRules( [
         'on_multiline'                     => 'ensure_fully_multiline',
         'keep_multiple_spaces_after_comma' => true,
     ],
-] )
-              ->setFinder( $finder );
+])
+              ->setFinder($finder);
