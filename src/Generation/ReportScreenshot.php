@@ -10,8 +10,15 @@ use Imagick;
 use Laravel\Dusk\Browser;
 use LaravelDuskReporter\Reporter;
 
+/**
+ * @method static addActionBeforeCombineScreenshot(\Closure $callback)
+ * @method static addActionCombineScreenshotPartForOffset(\Closure $callback)
+ * @method static addActionAfterCombineScreenshot(\Closure $callback)
+ */
 class ReportScreenshot implements ReportScreenshotContract
 {
+    use HasHooks;
+
     protected Reporter $reporter;
 
     protected string $fileExt = 'png';
@@ -90,7 +97,7 @@ class ReportScreenshot implements ReportScreenshotContract
      * Create fit report.
      *
      * @param Browser $browser
-     * @param string $filename
+     * @param string  $filename
      *
      * @return Browser
      */
@@ -105,7 +112,7 @@ class ReportScreenshot implements ReportScreenshotContract
      * Create combined report
      *
      * @param Browser $browser
-     * @param string $filename
+     * @param string  $filename
      *
      * @return Browser
      * @throws \ImagickException
@@ -125,7 +132,10 @@ class ReportScreenshot implements ReportScreenshotContract
         $counter      = 0;
         $offset       = 0;
         $files        = [];
+
+        $this->runHookAction('beforeCombineScreenshot', $browser);
         while ($offset < $fullHeight) {
+            $this->runHookAction('combineScreenshotPartForOffset', $browser, $offset);
             $browser->driver->executeScript('window.scrollTo(0, ' . $offset . ');');
             if ($windowHeight > ($needCapture = ($fullHeight - $offset))) {
                 $browser->resize($windowSize->getWidth(), $needCapture);
@@ -138,6 +148,7 @@ class ReportScreenshot implements ReportScreenshotContract
         }
         $browser->resize($windowSize->getWidth(), $windowSize->getHeight());
         $browser->driver->executeScript('window.scrollTo(0, 0);');
+        $this->runHookAction('afterCombineScreenshot', $browser);
 
         $im = new Imagick();
         foreach ($files as $file) {
@@ -158,8 +169,8 @@ class ReportScreenshot implements ReportScreenshotContract
     /**
      * Find screenshot filename without overriding
      *
-     * @param Browser $browser
-     * @param string $filename
+     * @param Browser     $browser
+     * @param string      $filename
      * @param string|null $suffix
      *
      * @return string
