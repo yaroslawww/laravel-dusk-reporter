@@ -2,6 +2,7 @@
 
 [![Packagist License](https://img.shields.io/packagist/l/yaroslawww/laravel-dusk-reporter?color=%234dc71f)](https://github.com/yaroslawww/laravel-dusk-reporter/blob/master/LICENSE.md)
 [![Packagist Version](https://img.shields.io/packagist/v/yaroslawww/laravel-dusk-reporter)](https://packagist.org/packages/yaroslawww/laravel-dusk-reporter)
+[![Total Downloads](https://img.shields.io/packagist/dt/yaroslawww/laravel-dusk-reporter)](https://packagist.org/packages/yaroslawww/laravel-dusk-reporter)
 [![Build Status](https://scrutinizer-ci.com/g/yaroslawww/laravel-dusk-reporter/badges/build.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-dusk-reporter/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/yaroslawww/laravel-dusk-reporter/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-dusk-reporter/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yaroslawww/laravel-dusk-reporter/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-dusk-reporter/?branch=master)
